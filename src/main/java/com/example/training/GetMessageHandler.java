@@ -2,14 +2,32 @@ package com.example.training;
 
 import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
+import lombok.SneakyThrows;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+
+import static io.vertx.ext.web.handler.impl.HTTPAuthorizationHandler.Type.BEARER;
 
 public class GetMessageHandler implements Handler<RoutingContext> {
+  HttpClient httpClient = HttpClientBuilder.create().build();
+
+  @SneakyThrows
   @Override
   public void handle(RoutingContext routingContext) {
-
+String url="https://destination-configuration.cfapps.eu12.hana.ondemand.com/destination-configuration/v1/destinations/Ahmed-Destination";
+    HttpGet request = new HttpGet(url);
+//    String jwtToken = "eyJhbGciOiJSUzI1NiIsImprdSI6Imh0dHBzOi8vZWxzYXllZC1veThzZnp6ZS5hdXRoZW50aWNhdGlvbi5ldTEyLmhhbmEub25kZW1hbmQuY29tL3Rva2VuX2tleXMiLCJraWQiOiJkZWZhdWx0LWp3dC1rZXktLTIwNTk0MDY3NDMiLCJ0eXAiOiJKV1QifQ.eyJqdGkiOiJiYWQ1ODYzZGM3ODc0MzM0YmU0MmM0ODc2NmIwNGY5MyIsImV4dF9hdHRyIjp7ImVuaGFuY2VyIjoiWFNVQUEiLCJzdWJhY2NvdW50aWQiOiJjZmE4M2NlYy0yYjgxLTQ1ZDMtOGFmOS04Y2Q2ODFhNmUxZWMiLCJ6ZG4iOiJlbHNheWVkLW95OHNmenplIiwic2VydmljZWluc3RhbmNlaWQiOiIxOWNhNzY3Yy0wOWUwLTQyYTYtYjllMC04NjVjYzRkMzU1NDkifSwidXNlcl91dWlkIjoiOTlmYWY2M2ItNGRmOC00MTdmLWI4NjUtMWE5ZThiYjViMzk1IiwieHMudXNlci5hdHRyaWJ1dGVzIjp7fSwieHMuc3lzdGVtLmF0dHJpYnV0ZXMiOnsieHMucm9sZWNvbGxlY3Rpb25zIjpbIlN1YmFjY291bnQgQWRtaW5pc3RyYXRvciJdfSwiZ2l2ZW5fbmFtZSI6IkFobWVkIiwiZmFtaWx5X25hbWUiOiJFbHNheWVkIiwic3ViIjoiYWE2YjE5ZWQtMjM3Yi00Y2VmLTk4OGYtM2EyMjJkMmIyNTAxIiwic2NvcGUiOlsiZGVzdGluYXRpb24teHNhcHBuYW1lIWI5LnJlYWREZXN0aW5hdGlvbiIsInVzZXJfYXR0cmlidXRlcyIsImRlc3RpbmF0aW9uLXhzYXBwbmFtZSFiOS5yZWFkU3ViYWNjb3VudFRydXN0IiwieHNfYWNjb3VudC5hY2Nlc3MiLCJkZXN0aW5hdGlvbi14c2FwcG5hbWUhYjkubWFuYWdlU3ViYWNjb3VudFRydXN0Iiwib3BlbmlkIiwiZGVzdGluYXRpb24teHNhcHBuYW1lIWI5Lm1hbmFnZURlc3RpbmF0aW9uIiwiZGVzdGluYXRpb24teHNhcHBuYW1lIWI5LnJlYWRDZXJ0aWZpY2F0ZSIsInVhYS51c2VyIiwiZGVzdGluYXRpb24teHNhcHBuYW1lIWI5Lm1hbmFnZUNlcnRpZmljYXRlIl0sImNsaWVudF9pZCI6InNiLWNsb25lMTljYTc2N2MwOWUwNDJhNmI5ZTA4NjVjYzRkMzU1NDkhYjk0ODJ8ZGVzdGluYXRpb24teHNhcHBuYW1lIWI5IiwiY2lkIjoic2ItY2xvbmUxOWNhNzY3YzA5ZTA0MmE2YjllMDg2NWNjNGQzNTU0OSFiOTQ4MnxkZXN0aW5hdGlvbi14c2FwcG5hbWUhYjkiLCJhenAiOiJzYi1jbG9uZTE5Y2E3NjdjMDllMDQyYTZiOWUwODY1Y2M0ZDM1NTQ5IWI5NDgyfGRlc3RpbmF0aW9uLXhzYXBwbmFtZSFiOSIsImdyYW50X3R5cGUiOiJwYXNzd29yZCIsInVzZXJfaWQiOiJhYTZiMTllZC0yMzdiLTRjZWYtOTg4Zi0zYTIyMmQyYjI1MDEiLCJvcmlnaW4iOiJzYXAuZGVmYXVsdCIsInVzZXJfbmFtZSI6ImEuZWxzYXllZEBzYXAuY29tIiwiZW1haWwiOiJhLmVsc2F5ZWRAc2FwLmNvbSIsImF1dGhfdGltZSI6MTY2MDU1ODg4OCwicmV2X3NpZyI6ImRhNWFiZmY2IiwiaWF0IjoxNjYwNTU4ODg4LCJleHAiOjE2NjA2MDIwODgsImlzcyI6Imh0dHBzOi8vZWxzYXllZC1veThzZnp6ZS5hdXRoZW50aWNhdGlvbi5ldTEyLmhhbmEub25kZW1hbmQuY29tL29hdXRoL3Rva2VuIiwiemlkIjoiYjgwMjBmOWQtYzAzNS00ZmU2LTg3ZDYtZTNjZjgyMzExZjJlIiwiYXVkIjpbInVhYSIsIm9wZW5pZCIsInhzX2FjY291bnQiLCJzYi1jbG9uZTE5Y2E3NjdjMDllMDQyYTZiOWUwODY1Y2M0ZDM1NTQ5IWI5NDgyfGRlc3RpbmF0aW9uLXhzYXBwbmFtZSFiOSIsImRlc3RpbmF0aW9uLXhzYXBwbmFtZSFiOSJdfQ.T-ZetmBZHaTU20YE-XtMY3bgpSsjA0YZWIts5S5mbLLggj0tfwjrHHczKNAPK5O_bM2jCzWY4e1_4za9UvwhUU98I0pMyWpR7b6157s5hP5mWy-eciU5Eg4FWVH9aoBGU0CxNDaMpZ_bJFEGl9PtiqPxV4ug21I0WOo6C7iJ9JCgaccSbtIaAud_JKlgEKoODMwj9HPgVMy5uHmuK5sMkvnU9_Q19nqEVNP9KUBkc3X5BirK3dSXpByxoEYSO1Mrxxg7O_QJ6hzpZFF_HfdigE1KEnjKsUWtnFgkdYvaj__u8oWpOL9ocJjXHPh2bM5bUzTB_rxnoOL2K5FlL3oxLA";
+//    request.addHeader("Authorization", BEARER + jwtToken);
+    HttpResponse result = httpClient.execute(request);
+//    HttpGet getRequest = new HttpGet("https://ahmed-training-vertx.cfapps.eu12.hana.ondemand.com/destinations/Ahmed-Destination");
+//    HttpResponse response = httpClient.execute(getRequest);
     routingContext.response()
-      .putHeader("content-type", "text/plain")
-      .putHeader("my-header","my-value").
-      end("Hello from Vert.x trying to fetch postgres database!");
+      .putHeader("content-type", "application/json")
+      .putHeader("If-None-Match","consectetur occaecat")
+//      .putHeader("my-header","my-value").
+      .end("Hello from Vert.x trying to fetch postgres database! : "+result);
   }
 }

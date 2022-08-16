@@ -1,5 +1,8 @@
 package com.example.training;
 
+import com.sap.xs.env.Credentials;
+import com.sap.xs.env.Service;
+import com.sap.xs.env.VcapServices;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 //import io.vertx.ext.sql.SQLClient;
@@ -12,6 +15,7 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.pgclient.PgConnectOptions;
 import io.vertx.pgclient.PgPool;
+import io.vertx.pgclient.SslMode;
 import io.vertx.sqlclient.PoolOptions;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.RowSet;
@@ -56,10 +60,10 @@ static final String ADDRESS = "my.request.address";
       restApi
     ).exceptionHandler(error -> System.out.println("failed with error : "+error))
 
-      .listen(8888, http -> {
+      .listen(8080, http -> {
       if (http.succeeded()) {
         startPromise.complete();
-        System.out.println("HTTP server started on port 8888");
+        System.out.println("HTTP server started on port 8080");
       } else {
         startPromise.fail(http.cause());
       }
@@ -90,12 +94,15 @@ static final String ADDRESS = "my.request.address";
 //  }
 
   public PgPool getPgPool(){
+    VcapServices vcapServices = VcapServices.fromEnvironment();
+    Service postgresTest = vcapServices.findService("postgrestest", null, null);
+    Credentials postgresTesCredentials = postgresTest.getCredentials();
     PgConnectOptions connectOptions = new PgConnectOptions()
-      .setPort(5432)
-      .setHost("localhost")
-      .setDatabase("postgres")
-      .setUser("postgres")
-      .setPassword("user123");
+      .setPort(Integer.parseInt(postgresTesCredentials.getPort()))
+      .setHost(postgresTesCredentials.getHost())
+      .setDatabase(postgresTesCredentials.getDbname())
+      .setUser(postgresTesCredentials.getUser())
+      .setPassword(postgresTesCredentials.getPassword());
 
 // Pool options
     PoolOptions poolOptions = new PoolOptions()
@@ -105,12 +112,17 @@ static final String ADDRESS = "my.request.address";
     return PgPool.pool(vertx,connectOptions, poolOptions);
   }
   public SqlClient dbConfig(){
+
+    VcapServices vcapServices = VcapServices.fromEnvironment();
+    Service postgresTest = vcapServices.findService("postgrestest", null, null);
+    Credentials postgresTesCredentials = postgresTest.getCredentials();
     PgConnectOptions connectOptions = new PgConnectOptions()
-      .setPort(5432)
-      .setHost("localhost")
-      .setDatabase("postgres")
-      .setUser("postgres")
-      .setPassword("user123");
+      .setPort(Integer.parseInt(postgresTesCredentials.getPort()))
+      .setHost(postgresTesCredentials.getHost())
+      .setDatabase(postgresTesCredentials.getDbname())
+      .setUser(postgresTesCredentials.getUser())
+      .setPassword(postgresTesCredentials.getPassword())
+      .setSslMode(SslMode.DISABLE);
 
 // Pool options
     PoolOptions poolOptions = new PoolOptions()

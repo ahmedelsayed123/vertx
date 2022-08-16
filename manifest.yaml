@@ -1,12 +1,17 @@
 applications:
-  - name: ahmed-training-vertx
-    path: target/training-1.0.0-SNAPSHOT-fat.jar
-    instances: 1
-    disk_quota: 512M
-    memory: 768M
-    buildpack: sap_java_buildpack
-    services:
-      - postgrestest
+- name: ahmed-training-vertx
+  path: target/training-1.0.0-SNAPSHOT-fat.jar
+  instances: 1
+  disk_quota: 512M
+  memory: 768M
+  buildpacks:
+  - sap_java_buildpack
+  stack: cflinuxfs3
+  services:
+  - postgrestest
+  routes:
+  - route:  musalatenantmgt-pulsar-provider.internal.cfapps.eu12.hana.ondemand.com
+    protocol: http1
 #  routes:
 #    - route: musalatenantmgt-pulsar-provider.internal.cfapps.eu12.hana.ondemand.com
 #  env:

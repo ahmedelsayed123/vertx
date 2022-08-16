@@ -1,5 +1,8 @@
 package com.example.training;
 
+import com.sap.xs.env.Credentials;
+import com.sap.xs.env.Service;
+import com.sap.xs.env.VcapServices;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.eventbus.Message;
@@ -19,12 +22,16 @@ private CarRepo carRepo;
     vertx.eventBus().consumer(ADDRESS,this::handler);  }
 
   public PgPool getPgPool(){
+    VcapServices vcapServices = VcapServices.fromEnvironment();
+    Service postgresTest = vcapServices.findService("postgrestest", null, null);
+    Credentials postgresTesCredentials = postgresTest.getCredentials();
     PgConnectOptions connectOptions = new PgConnectOptions()
-      .setPort(5432)
-      .setHost("localhost")
-      .setDatabase("postgres")
-      .setUser("postgres")
-      .setPassword("user123");
+      .setPort(Integer.parseInt(postgresTesCredentials.getPort()))
+      .setHost(postgresTesCredentials.getHost())
+      .setDatabase(postgresTesCredentials.getDbname())
+      .setUser(postgresTesCredentials.getUser())
+      .setPassword(postgresTesCredentials.getPassword());
+
 
 // Pool options
     PoolOptions poolOptions = new PoolOptions()
